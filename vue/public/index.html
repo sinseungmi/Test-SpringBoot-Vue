@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <style>
+    	.red {
+    		color : red;
+    	}
+    	.font-size {
+    		font-size : 50px;
+    	}
+    </style> 
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+   <body>
+  	<div id="app">
+  		{{helloMethod()}}
+  		<form v-on:submit="confirm()" action="./api/hello">
+  			<input :type="typeOfInput" :value="initialValue">
+  			<input type="submit">
+  		</form>
+  		<a :href="link">홈페이지</a> <br>
+  		{{year}}
+  		<button v-on:click="plus()">plus</button>
+  		<button v-on:click="minus()">minus</button> <br>
+  		<input type="text" :value="write" @input="textModifier"> <br>
+  		{{write}} <br>
+  		{{message}} <br>
+  		{{changeMessage}} <br>
+  		{{reverseMessage}} <br>
+  		<button @click="changeMessage">실행?</button> <br>
+  		{{guide}}
+  		<div :class="{red : isRed, 'font-size' : isBig}">변경될 텍스트</div>
+  		<div :class="[isRed ? 'red' : '', isBig ? 'font-size' : '']">변경</div>
+  		<button @click="changeClass">button</button>
+  		<div :style="{color : newColor, 'font-size' : newSize}">스타일 텍스트</div>
+  		<div v-show="show === 0">v-show에 의한 표현</div>
+  		<div v-if="show < 2">show가 2보다 작습니다</div>
+  		<div v-if="show === 2">show는 2</div>
+  		<div v-if="show > 3">show는 3보다 큼</div>
+  		{{show}} <br>
+  		<button @click="increaseNumber">increase</button>
+  		<div v-for="(person, index) in people" :key="person.id + '-' + person.name">{{index}}번째 {{person.name}}는 나이가 {{person.age}}입니다.</div>
+  		<div v-for="(value, key, index) in book">{{index}}, {{key}} : {{value}}</div>
+  		<div>{{name}}</div>
+  		<button @click="changeName">click</button>
+  	</div>
+  	<div id="test2">
+  		<div>{{name}}</div>
+  		<button @click="changeName">click</button>
+  	</div>
+  	<div id="test3">
+  		{{name}} <br>
+  		<compom></compom>
+  	</div>
+  	<script>
+  	
+  		const test = new Vue({
+  			el:"#test",
+  			data : {
+  				person : {
+	  				name : "charlie",
+  					age : "32"				
+  				},
+	  			typeOfInput : "text",
+	  			initialValue : "hello",
+	  			link : "https://whitepro.tistory.com/242?category=972127",
+	  		    year : "2021",
+	  		    write : "type area",
+	  		    message : "안녕하세요",
+	  		    guide : "",
+	  		    isRed : false,
+	  		    isBig : false,
+	  		    newColor : "green",
+	  		    newSize : "30px",
+	  		    show : 0,
+	  		    people : [
+	  		    	{id : 1, name : "a", age : 20},
+	  		    	{id : 2, name : "b", age : 30},
+	  		    	{id : 3, name : "c", age : 40},
+	  		    	{id : 4, name : "d", age : 50}
+	  		    ],
+	  		    book : {
+	  		    	title : "Harry Potter",
+	  		    	author : "J.K.Rowling",
+	  		    	publishedAt : "26 June 1997"
+	  		    },
+	  		    name : "charlie"
+  			},
+  			methods : {
+  				thisYear : function(greeting) {
+  					return `${greeting}! ${this.person.name}는 올해 ${this.person.age}살 입니다.`;
+  				},
+  				helloMethod() {
+  					return this.thisYear("Hello");
+  				},
+  				plus(){
+  					this.year++;
+  				},
+  				minus(){
+  					this.year--;
+  				},
+  				confirm(){
+  					alert("제출 확인");
+  				},
+  				textModifier(event) {
+  					this.write = event.target.value;
+  				},
+  				changeMessage() {
+  					 this.message = "안녕히 계세요";
+  				},
+  				changeClass(){
+  					this.isRed = !this.isRed;
+  					this.isBig = !this.isBig;
+  				},
+  				increaseNumber() {
+  					this.show++;
+  				},
+  				changeName() {
+  					test2.name = test2.name + " changed"
+  				}
+  			},
+  			/* computed : {
+  				reverseMessage() {
+  					return this.message.split('').reverse().join('');
+  				}
+  			} */
+  			watch : {
+  				message(newVal, oldVal) {
+  					this.guide = oldVal + " 하자마자 " + newVal;
+  				}
+  			}
+  		})
+  		
+  		const test2 = new Vue({
+  			el : "#test2",
+  			data : {
+  				name : "charlie2"
+  			},
+  			methods : {
+  				changeName() { 
+  					test.name = test.name + " changed"
+  				}
+  			}
+  		})
+  		
+  		const greeting = Vue.component('greeting', {
+  			template : 
+  				`
+  					<div> hello </div>
+  				`
+  		})
+  		
+  		const compo = Vue.component('compo', {
+  			components : {
+  				"greeting" : greeting
+  			},
+  			
+  			template : 
+  				`
+  				<div>
+  				{{name}} <br>
+  				<greeting></greeting>
+  				<button @click="changeName"> change </button>
+  				</div>
+  				`,
+  				data() {
+  					return {
+  						name : "charlie_combo"
+  					}
+  				},
+  				methods : {
+  					changeName() {
+  						this.name = this.name + "changed"
+  					}
+  				}
+  			
+  		})
+  		
+  		new Vue ({
+  			el : "#test3",
+  			data : {
+  				name : "charlie"
+  			},
+  			components : {
+  				"compom" : compo
+  			}
+  		})
+  	</script>
+  </body>
+</html>
